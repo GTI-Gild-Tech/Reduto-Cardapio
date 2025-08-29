@@ -1,45 +1,33 @@
-import { NavButton } from "./NavButton";
+import { Link, useLocation } from "react-router-dom";
+import { NavButton } from "./NavButton"; // Importe o NavButton
 
-interface NavbarProps {
-  activePage: string;
-  setActivePage: (page: string) => void;
-}
+interface NavbarProps {}
 
-export function Navbar({
-  activePage,
-  setActivePage,
-}: NavbarProps) {
+export const Navbar: React.FC<NavbarProps> = () => {
+  const location = useLocation();
+
   return (
-    <div className="flex justify-center w-full">
-      <div
-        className="bg-[#f0f0f0] box-border flex gap-5 items-start justify-start p-[10px] relative rounded-[30px] shadow-[4px_4px_4px_0px_rgba(130,118,87,0.19)] shrink-0"
-        data-name="Navbar"
-      >
-        <NavButton
-          isActive={activePage === "home"}
-          onClick={() => setActivePage("home")}
-        >
+    <nav className="flex gap-4 p-4 bg-white shadow-md justify-self-center rounded-full">
+      <Link to="/" className="no-underline">
+        <NavButton isActive={location.pathname === "/home"} onClick={() => {}}>
           Home
         </NavButton>
-        <NavButton
-          isActive={activePage === "pedidos"}
-          onClick={() => setActivePage("pedidos")}
-        >
+      </Link>
+      <Link to="/pedidos" className="no-underline">
+        <NavButton isActive={location.pathname === "/pedidos"} onClick={() => {}}>
           Pedidos
         </NavButton>
-        <NavButton
-          isActive={activePage === "fidelidade"}
-          onClick={() => setActivePage("fidelidade")}
-        >
+      </Link>
+      <Link to="/fidelidade" className="no-underline">
+        <NavButton isActive={location.pathname === "/fidelidade"} onClick={() => {}}>
           Fidelidade
         </NavButton>
-        <NavButton
-          isActive={activePage === "cardapio"}
-          onClick={() => setActivePage("cardapio")}
-        >
-          Cardapio
+      </Link>
+      <Link to="/cardapio" className="no-underline">
+        <NavButton isActive={location.pathname === "/cardapio"} onClick={() => {}}>
+          Cardápio
         </NavButton>
-      </div>
-    </div>
+      </Link>
+    </nav>
   );
-}
+};
