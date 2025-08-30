@@ -1,7 +1,9 @@
 import { motion } from 'motion/react';
 import { Button } from './../ui/button';
 import { ShoppingCart, Home as HomeIcon } from 'lucide-react';
+import { ShieldAlert } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { Link } from "react-router-dom";
 
 export function Navigation() {
   const { getTotalItems, openCart } = useApp();
@@ -14,6 +16,17 @@ export function Navigation() {
       transition={{ duration: 0.8, delay: 0.2 }}
     >
       <nav className="bg-[#c1a07b] rounded-bl-[50px] rounded-br-[50px] px-[200px] py-10 flex items-center gap-5" role="navigation" aria-label="Main navigation">
+        <motion.div
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Link to="/dashboard-admin/home">
+            <Button variant="ghost" size="icon" className="bg-white/20 hover:bg-white/30 transition-colors duration-300" aria-label="Home">
+              <ShieldAlert className="h-8 w-8 text-white" />
+            </Button>
+          </Link>
+        </motion.div>
         <motion.div
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
