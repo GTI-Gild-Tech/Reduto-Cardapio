@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+import { Plus, Download } from "lucide-react";
 
 type PriceType = 'Tamanho' | 'Porção' | 'Único';
 
@@ -574,6 +574,10 @@ export function KanbanBoard() {
     setIsEditModalOpen(true);
   };
 
+  const handleExport = () => {
+    // Implementar lógica de exportação aqui
+  };
+
   const handleAddNewCategory = () => {
     setNewCategoryName('');
     setIsCategoryModalOpen(true);
@@ -660,29 +664,31 @@ export function KanbanBoard() {
         {/* Header */}
         <div className="content-stretch flex gap-[15px] items-start justify-start relative shrink-0">
           <button
-            onClick={handleAddNewProduct}
+            onClick={handleExport}
             className="bg-[#0f4c50] box-border content-stretch flex gap-2.5 items-center justify-center px-6 py-3 relative rounded-[50px] shrink-0 hover:bg-[#0d4247] transition-colors"
           >
-            <svg className="relative shrink-0 size-4" fill="none" preserveAspectRatio="none" viewBox="0 0 16 16">
-              <path d={svgPaths.p2b62ea40} fill="#FFFFFF" stroke="#FFFFFF" />
-            </svg>
             <div className="flex flex-col font-['Roboto:Regular',_sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[18px] text-center text-nowrap text-white tracking-[0.2px]" style={{ fontVariationSettings: "'wdth' 100" }}>
-              <p className="leading-none whitespace-pre">Novo produto</p>
+              <p className="leading-none whitespace-pre">Exportar</p>
             </div>
+            <Download className="size-4 text-white" />
           </button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="bg-[#0f4c50] box-border content-stretch flex gap-2.5 items-center justify-center px-6 py-3 relative rounded-[50px] shrink-0 hover:bg-[#0d4247] transition-colors">
                 <div className="flex flex-col font-['Roboto:Regular',_sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[18px] text-center text-nowrap text-white tracking-[0.2px]" style={{ fontVariationSettings: "'wdth' 100" }}>
-                  <p className="leading-none whitespace-pre">Nova categoria</p>
+                  <p className="leading-none whitespace-pre">Adicionar</p>
                 </div>
-                <ChevronDown className="size-4 text-white" />
+                <Plus className="size-4 text-white" />
+                
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={handleAddNewCategory}>
+            <DropdownMenuContent className="bg-white min-w-[220px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] rounded-[6px] p-1" sideOffset={5}>
+              <DropdownMenuItem onClick={handleAddNewCategory} className="cursor-pointer hover:bg-slate-100">
                 Adicionar nova categoria
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleAddNewProduct} className="cursor-pointer hover:bg-slate-100">
+                Adicionar novo produto
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

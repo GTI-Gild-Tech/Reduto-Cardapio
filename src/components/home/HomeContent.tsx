@@ -72,7 +72,7 @@ function MenuCategory({ title, products }: MenuCategoryProps) {
   return (
     <div className="content-stretch flex flex-col gap-6 items-start justify-start relative shrink-0 w-full">
       {/* Título da categoria */}
-      <div className="font-['Rethink_Sans:Bold',_sans-serif] font-bold leading-[0] relative shrink-0 text-[#0f4c50] text-[32px]">
+      <div className="font-[Retrokia] font-bold leading-[0] relative shrink-0 text-[#0f4c50] text-[32px]">
         <p className="leading-[1.2]">{title}</p>
       </div>
       
@@ -104,8 +104,8 @@ export function HomeContent() {
     <div className="basis-0 box-border content-stretch flex flex-col gap-8 grow items-center justify-start min-h-px min-w-px px-8 py-[50px] relative shrink-0 w-full">
       {/* Título principal */}
       <div className="font-['Retrokia:Demo',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#0f4c50] text-[48px] text-center tracking-[-1.28px]">
-        <p className="leading-[1.3] whitespace-pre">
-          Nosso Cardápio
+        <p className="leading-[1.3] whitespace-pre font-[Retrokia]">
+          Nosso Cardapio
         </p>
       </div>
 
