@@ -27,20 +27,6 @@ function DateFilterInput({
   );
 }
 
-interface SearchButtonProps {
-  children: React.ReactNode;
-}
-
-function SearchButton({ children }: SearchButtonProps) {
-  return (
-    <div className="bg-[#c1a07b] box-border content-stretch flex flex-col gap-2.5 items-center justify-center px-0.5 py-[3px] relative rounded-[10px] shrink-0 size-[35px] cursor-pointer hover:bg-[#b19966] transition-colors">
-      <div className="content-stretch flex flex-col items-center justify-start overflow-clip relative shrink-0">
-        {children}
-      </div>
-    </div>
-  );
-}
-
 interface FilterBarProps {
   searchTerm: string;
   setSearchTerm: (value: string) => void;
@@ -81,7 +67,6 @@ export function FilterBar({
         >
           Limpar
         </button>
-        <SearchButton>{searchButton}</SearchButton>
       </div>
     </div>
   );

@@ -1,58 +1,49 @@
-import React, { useState } from 'react';
-import { Navbar } from './components/navigation/Navbar';
-import { ProductsProvider } from './components/context/ProductsContext';
-import { HomeContent } from './components/home/HomeContent';
-import { PedidosContent } from './components/pedidos/PedidosContent';
-import { CardapioContent } from './components/cardapio/CardapioContent';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ProductsProvider } from "./components/context/ProductsContext";
+import { AuthProvider, useAuth } from "./components/auth/AuthContext"; // Importe AuthProvider e useAuth
 
-function FidelidadeContent() {
-  return (
-    <div className="basis-0 box-border content-stretch flex flex-col gap-[25px] grow items-center justify-start min-h-px min-w-px px-0 py-[50px] relative shrink-0 w-full">
-      <div className="font-['Retrokia:Demo',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#0f4c50] text-[64px] text-nowrap tracking-[-1.28px]">
-        <p className="leading-[1.5] whitespace-pre">
-          Fidelidade
-        </p>
-      </div>
-      <div className="text-center text-[#797474]">
-        <p>Componente Fidelidade será implementado em seguida</p>
-      </div>
-    </div>
-  );
-}
+// Importe os componentes das rotas e do layout
+import { PublicSite } from "./components/public_site/PublicSite";
+import { AdminRoute } from "./components/AdminRouter";
+import { DashboardLayout } from "./components/DashboardLayout";
+import { Login } from "./components/auth/Login"; // Importe o componente de login
+import { HomeContent } from "./components/home/HomeContent";
+import { PedidosContent } from "./components/pedidos/PedidosContent";
+import { FidelidadeContent } from "./components/fidelidade/FidelidadeContent";
+import { CardapioContent } from "./components/cardapio/CardapioContent";
 
 
 const App: React.FC = () => {
-  const [activePage, setActivePage] = useState<string>(''); // 1. State for activePage
-
-  // 2. Function to render content based on activePage
-  const renderContent = () => {
-    switch (activePage) {
-      case "home":
-        return <HomeContent />;
-      case "pedidos":
-        return <PedidosContent />;
-      case "fidelidade":
-        return <FidelidadeContent />;
-      case "cardapio":
-        return <CardapioContent />;
-      default:
-        return <HomeContent />;
-    }
-  };
+  const { login } = useAuth(); // Obtenha a função de login do contexto
 
   return (
-      <ProductsProvider>
-        <div className="bg-[#f0eee9]">
-          <div className="">
-            <Navbar
-              activePage={activePage}
-              setActivePage={setActivePage}
-            />
-            {renderContent()}
-          </div>
-        </div>
-      </ProductsProvider>
+    <ProductsProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<PublicSite />} />
+          
+          <Route path="/dashboard-admin/login" element={<Login onLogin={login} />} />
+
+          <Route path="/dashboard-admin" element={<AdminRoute />}>
+            <Route element={<DashboardLayout />}>
+              <Route path="home" element={<HomeContent />} />
+              <Route path="pedidos" element={<PedidosContent />} />
+              <Route path="fidelidade" element={<FidelidadeContent />} />
+              <Route path="cardapio" element={<CardapioContent />} />
+            </Route>
+          </Route>
+        </Routes>
+      </Router>
+    </ProductsProvider>
   );
 };
 
-export default App;
+// O seu componente App deve ser envolvido pelo AuthProvider
+const AppWithAuth = () => (
+  <AuthProvider>
+    <App />
+  </AuthProvider>
+);
+
+export default AppWithAuth;

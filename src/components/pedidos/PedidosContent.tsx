@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { FilterBar } from "./FilterBar";
 import { Table, type Order } from "./Table";
-import { Pagination } from "../shared/Pagination";
 import searchSvgPaths from "../../imports/svg-jrmubkrrio";
 
 // Mock data for the table
@@ -144,11 +143,11 @@ export function PedidosContent() {
 
   return (
     <div
-      className="basis-0 box-border content-stretch flex flex-col gap-[25px] grow items-center justify-start min-h-px min-w-px px-0 py-[50px] relative shrink-0 w-full"
+      className=" basis-0 box-border content-stretch flex flex-col gap-[25px] grow items-center justify-start px-0 py-[50px] relative shrink-0 w-screen"
       data-name="Left side 8 Column"
     >
       <div className="font-['Retrokia:Demo',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#0f4c50] text-[64px] text-nowrap tracking-[-1.28px]">
-        <p className="leading-[1.5] whitespace-pre">Pedidos</p>
+        <p className="leading-[1.5] whitespace-pre font-[Retrokia]">Pedidos</p>
       </div>
       <FilterBar
         searchTerm={searchTerm}
@@ -166,7 +165,6 @@ export function PedidosContent() {
         endDate={endDate}
         orders={mockOrders}
       />
-      <Pagination />
     </div>
   );
 }

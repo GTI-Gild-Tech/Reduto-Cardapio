@@ -40,7 +40,7 @@ interface TableDataCellProps {
 function TableDataCell({ children, width }: TableDataCellProps) {
   return (
     <div
-      className={`bg-[rgba(255,255,255,0)] content-stretch flex flex-col items-start justify-start relative self-stretch shrink-0 ${width || "basis-0 grow min-h-px min-w-px"}`}
+      className={`bg-[rgba(255,255,255,0)] border-[1px] border-slate-900/10 content-stretch flex flex-col items-start justify-start relative self-stretch shrink-0 ${width || "basis-0 grow min-h-px min-w-px"}`}
       data-name="Table/Cell"
     >
       <div
@@ -164,7 +164,7 @@ export function Table({
               />
               <div className="h-8 relative shrink-0 w-full">
                 <div className="relative size-full">
-                  <div className="h-8 w-full" />
+                  <TableHeaderCell>Pedido</TableHeaderCell>
                 </div>
               </div>
             </div>
@@ -177,7 +177,7 @@ export function Table({
               />
               <div className="h-8 relative shrink-0 w-full">
                 <div className="relative size-full">
-                  <div className="h-8 w-full" />
+                 <TableHeaderCell>Status</TableHeaderCell>
                 </div>
               </div>
             </div>
