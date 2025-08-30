@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { MenuSection } from './MenuSection';
 import { Navigation } from './Navigation';
 import { CoffeeIllustration } from './CoffeeIllustration';
-import { useApp } from '../context/AppContext';
+import { useApp } from './AppContext';
 import { menuCategories } from '../../data/menuData';
 import { HomeContent } from '../home/HomeContent';
 

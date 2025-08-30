@@ -1,5 +1,5 @@
 // components/public_site/PublicSite.tsx
-import { AppProvider } from '../context/AppContext';
+import { AppProvider } from './AppContext';
 import { AppContainer } from './AppContainer';
 import { Home } from './Home';
 

@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { Cart } from './Cart';
 import { Checkout } from './Checkout';
-import { useApp } from '../context/AppContext';
+import { useApp } from './AppContext';
 
 interface AppContainerProps {
   children: React.ReactNode;
