@@ -1,4 +1,4 @@
-import svgPaths from "./svg-kkofn0df5";
+import svgPaths from "./logo";
 import imgBackground from "figma:asset/28fc783ae0566eeb1879aa672ed5c5362de02876.png";
 
 function Background() {

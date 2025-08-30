@@ -16,7 +16,7 @@ export const menuCategories = [
   },
   {
     id: 'cafes',
-    title: 'Cafés',
+    title: 'Cafes',
     items: [
       { id: 9, name: 'Café Expresso', priceP: 6.00, priceM: 10.00 },
       { id: 10, name: 'Café Americano', priceP: 7.00, priceM: 11.00 },

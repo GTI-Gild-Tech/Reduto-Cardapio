@@ -15,7 +15,7 @@ export function Navigation() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.2 }}
     >
-      <nav className="bg-[#c1a07b] rounded-bl-[50px] rounded-br-[50px] px-[200px] py-10 flex items-center gap-5" role="navigation" aria-label="Main navigation">
+      <nav className="bg-[#c1a07b] rounded-bl-[50px] rounded-br-[50px] px-20 py-5 flex items-center gap-5" role="navigation" aria-label="Main navigation">
         <motion.div
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}

@@ -1,34 +1,50 @@
-import imgBackground from "./../../assets/6feb31b16ef07d8aad72ffc0a24969c050e5a069.png";
-import { motion } from 'motion/react';
+import imgBackground from "./../../assets/Background.png";
+import { motion } from 'framer-motion';
 import { MenuSection } from './MenuSection';
 import { Navigation } from './Navigation';
 import { CoffeeIllustration } from './CoffeeIllustration';
 import { useApp } from '../context/AppContext';
 import { menuCategories } from '../../data/menuData';
+import { HomeContent } from '../home/HomeContent';
 
 export function Home() {
   const { addToCart } = useApp();
   return (
-    <div className="min-h-screen bg-[#f0eee9] relative">
-      {/* Background */}
-      <div className="fixed inset-0 z-0">
-        <div 
-          className="absolute inset-0 bg-cover bg-center blur-[9.9px]"
-          style={{ backgroundImage: `url('${imgBackground}')` }}
-        />
-        <div className="absolute inset-0 bg-[#f0eee9]/80" />
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <div 
+        className="relative bg-cover bg-center min-h-[100vh]"
+        style={{ backgroundImage: `url('${imgBackground}')` }}
+      >
+      
+
+        {/* Conteúdo da Hero Section */}
+        <div className="relative mx-auto max-w-[1129px] px-4">
+          <Navigation />
+          <CoffeeIllustration />
+          {/* Scroll Indicator */}
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="flex justify-center"
+          >
+            <div className="w-6 h-10 border-2 border-[#E4DDCD] rounded-full flex justify-center">
+              <div className="w-1 h-3 bg-[#c1a07b] rounded-full mt-2"></div>
+            </div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="flex justify-center pt-1 text-[#E4DDCD]"
+          > Veja mais
+          </motion.div>
+        </div>
       </div>
 
-      {/* Content */}
-      <div className="relative z-10">
-        {/* Navigation */}
-        <Navigation />
-
-        {/* Coffee Cup Illustration */}
-        <CoffeeIllustration />
-
-        {/* Menu Sections */}
-        <div className="max-w-[1129px] mx-auto px-4 space-y-16">
+      {/* Main Content Section */}
+      <div className="bg-[#f0eee9]">
+        <div className="max-w-[1129px] mx-auto px-4">
           {menuCategories.map((category, index) => (
             <motion.div
               key={category.id}

@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import svgPaths from "../../imports/svg-kkofn0df5";
+import svgPaths from "../../imports/logo";
 
 export function CoffeeIllustration() {
   return (
@@ -10,7 +10,7 @@ export function CoffeeIllustration() {
       transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
     >
       <motion.div 
-        className="w-[663px] h-[455px] max-w-full"
+        className="w-[500px]  max-w-full"
         whileHover={{ scale: 1.05 }}
         transition={{ duration: 0.3 }}
       >
