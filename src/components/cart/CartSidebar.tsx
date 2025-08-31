@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { useCart } from "../context/CartContext";
 
+import { useOrders } from "../context/OrdersContext";
+
+
 interface CartSidebarProps {
   isOpen: boolean;
   onClose: () => void;
@@ -14,6 +17,7 @@ const formatPrice = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
+  const { addOrder } = useOrders();
   const { cart, removeFromCart, clearCart } = useCart();
 
   const [step, setStep] = useState<Step>("cart");
@@ -34,38 +38,41 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   };
 
   const validateAndFinish = () => {
-    const newErrors: { name?: string; table?: string } = {};
-    if (!customerName.trim()) newErrors.name = "Informe como você quer ser chamado(a).";
-    if (!tableNumber.trim()) newErrors.table = "Informe o número/identificação da mesa.";
+  const newErrors: { name?: string; table?: string } = {};
+  if (!customerName.trim()) newErrors.name = "Informe como você quer ser chamado(a).";
+  if (!tableNumber.trim()) newErrors.table = "Informe o número/identificação da mesa.";
+  setErrors(newErrors);
+  if (Object.keys(newErrors).length > 0) return;
 
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) return;
+  // monta items a partir do cart
+  const items = cart.map(i => ({
+    id: i.product.id,
+    name: i.product.name,
+    category: i.product.category,
+    size: i.size,
+    unitPrice: i.price,
+    quantity: i.quantity,
+    subtotal: i.price * i.quantity,
+  }));
 
-    // 👉 Aqui você pode enviar o pedido para seu backend / WhatsApp / Firestore, etc.
-    // Exemplo de payload:
-    // const payload = {
-    //   customerName,
-    //   tableNumber,
-    //   items: cart.map(i => ({
-    //     id: i.product.id,
-    //     name: i.product.name,
-    //     category: i.product.category,
-    //     size: i.size,
-    //     unitPrice: i.price,
-    //     quantity: i.quantity,
-    //     subtotal: i.price * i.quantity,
-    //   })),
-    //   total,
-    //   createdAt: new Date().toISOString(),
-    // };
+  // cria o pedido em memória (id aleatório + datetime definidos no contexto)
+  const order = addOrder({
+    name: customerName,
+    table: tableNumber,
+    items,
+    total,
+  });
 
-    // Por enquanto, só fecha e limpa (se quiser):
-    clearCart();
-    onClose();
+  // comportamento pós envio (ajuste como preferir)
+  clearCart();
+  setStep("cart");
+  setCustomerName("");
+  setTableNumber("");
+  onClose();
 
-    // Dica: se preferir não limpar, remova clearCart().
-    alert("Pedido finalizado com sucesso! (implemente a gravação/envio aqui)");
-  };
+  // opcional: feedback
+  // console.log("Pedido criado:", order);
+};
 
   // Submissão com Enter no formulário
   const onFormKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {

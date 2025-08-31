@@ -13,18 +13,21 @@ import { PedidosContent } from "./components/pedidos/PedidosContent";
 import { FidelidadeContent } from "./components/fidelidade/FidelidadeContent";
 import { CardapioContent } from "./components/cardapio/CardapioContent";
 
+import { CartProvider } from "./components/context/CartContext";
+import { OrdersProvider } from "./components/context/OrdersContext";
+
 
 const App: React.FC = () => {
   const { login } = useAuth(); // Obtenha a função de login do contexto
 
   return (
     <ProductsProvider>
+      <CartProvider>
+      <OrdersProvider>
       <Router>
         <Routes>
           <Route path="/" element={<PublicSite />} />
-          
           <Route path="/dashboard-admin/login" element={<Login onLogin={login} />} />
-
           <Route path="/dashboard-admin" element={<AdminRoute />}>
             <Route element={<DashboardLayout />}>
               <Route path="home" element={<HomeContent />} />
@@ -35,6 +38,8 @@ const App: React.FC = () => {
           </Route>
         </Routes>
       </Router>
+      </OrdersProvider>
+    </CartProvider>
     </ProductsProvider>
   );
 };
