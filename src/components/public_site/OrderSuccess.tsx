@@ -14,7 +14,7 @@ export function OrderSuccess({ isOpen, onClose, customerName, tableNumber, total
   if (!isOpen) return null;
 
   const handleEvaluate = () => {
-    window.open('https://www.google.com/search?q=reduto+coffice+avaliação', '_blank');
+    window.open('https://share.google/KymJkgB4Jm5nZIIho', '_blank');
     onClose();
   };
 
