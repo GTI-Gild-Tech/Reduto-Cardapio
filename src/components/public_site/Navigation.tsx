@@ -2,7 +2,7 @@ import { motion } from 'motion/react';
 import { Button } from './../ui/button';
 import { ShoppingCart, Home as HomeIcon } from 'lucide-react';
 import { ShieldAlert } from 'lucide-react';
-import { useApp } from '../context/AppContext';
+import { useApp } from './AppContext';
 import { Link } from "react-router-dom";
 
 export function Navigation() {

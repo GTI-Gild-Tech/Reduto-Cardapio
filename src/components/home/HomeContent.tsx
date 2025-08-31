@@ -2,36 +2,37 @@ import { useState } from "react";
 import { Product } from "../cardapio/KanbanComponents";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { useProducts } from "../context/ProductsContext";
+import { useCart } from "../context/CartContext";
+import { AddToCartModal } from "../cart/AddToCartModal";
 
 interface MenuProductCardProps {
   product: Product;
 }
 
 function MenuProductCard({ product }: MenuProductCardProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const formatPrices = () => {
-    return product.sizes.map(size => `${size.size} - R${size.price}`).join(' | ');
+    return product.sizes.map(size => `${size.size} - R$${size.price}`).join(' | ');
   };
 
-  // Selecionar imagem baseada na categoria
   const getProductImage = () => {
     switch (product.category) {
       case 'Cappuccinos':
-        return "https://images.unsplash.com/photo-1658646479124-bc31e6849497?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2ZmZWUlMjBjYXBwdWNjaW5vfGVufDF8fHx8MTc1NjQ4NDkxOHww&ixlib=rb-4.1.0&q=80&w=320&h=180&fit=crop";
+        return "https://images.unsplash.com/photo-1658646479124-bc31e6849497?...";
       case 'Cafés':
-        return "https://images.unsplash.com/photo-1612509590595-785e974ed690?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlc3ByZXNzbyUyMGNvZmZlZXxlbnwxfHx8fDE3NTY0ODQ5MjJ8MA&ixlib=rb-4.1.0&q=80&w=320&h=180&fit=crop";
+        return "https://images.unsplash.com/photo-1612509590595-785e974ed690?...";
       case 'Lanches':
-        return "https://images.unsplash.com/photo-1673534409216-91c3175b9b2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYW5kd2ljaCUyMGZvb2R8ZW58MXx8fHwxNzU2NDg0OTI1fDA&ixlib=rb-4.1.0&q=80&w=320&h=180&fit=crop";
+        return "https://images.unsplash.com/photo-1673534409216-91c3175b9b2d?...";
       default:
-        return "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=320&h=180&fit=crop";
+        return "https://images.unsplash.com/photo-1509042239860-f550ce710b93?...";
     }
   };
 
   return (
-    <div className="bg-white box-border content-stretch flex flex-col gap-4 items-start justify-start p-6 relative rounded-[12px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.1)] shrink-0 w-full max-w-[320px] hover:shadow-[0px_4px_16px_0px_rgba(0,0,0,0.15)] transition-all duration-200">
-      <div aria-hidden="true" className="absolute border border-[#e4ddcd] border-solid inset-0 pointer-events-none rounded-[12px]" />
-      
-      {/* Imagem do produto */}
-      <div className="w-full h-[180px] relative rounded-[8px] bg-[#f5f5f5] overflow-hidden">
+    <div className="bg-white flex flex-col gap-4 p-6 rounded-[12px] shadow-md max-w-[320px] hover:shadow-lg transition-all">
+      {/* Imagem */}
+      <div className="w-full h-[180px] rounded-[8px] bg-[#f5f5f5] overflow-hidden">
         <ImageWithFallback
           src={getProductImage()}
           alt={product.name}
@@ -39,29 +40,30 @@ function MenuProductCard({ product }: MenuProductCardProps) {
         />
       </div>
 
-      {/* Nome do produto */}
-      <div className="content-stretch flex gap-2 items-center justify-start relative shrink-0 w-full">
-        <div className="font-['Rethink_Sans:SemiBold',_sans-serif] font-semibold leading-[0] relative shrink-0 text-[#0f4c50] text-[20px] text-nowrap">
-          <p className="leading-[1.5] whitespace-pre">{product.name}</p>
-        </div>
-      </div>
+      {/* Nome */}
+      <h3 className="font-semibold text-[#0f4c50] text-[20px]">{product.name}</h3>
 
       {/* Preços */}
-      <div className="content-stretch flex items-center justify-between relative shrink-0 w-full">
-        <div className="font-['Rethink_Sans:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#2f1b04] text-[14px] flex-1">
-          <p className="leading-[1.4]">{formatPrices()}</p>
-        </div>
-      </div>
+      <p className="text-[#2f1b04] text-[14px]">{formatPrices()}</p>
 
-      {/* Botão de pedido */}
-      <button className="bg-[#0f4c50] box-border content-stretch flex gap-2.5 items-center justify-center px-6 py-3 relative rounded-[8px] shrink-0 w-full hover:bg-[#0d4247] transition-colors">
-        <div className="flex flex-col font-['Roboto:Regular',_sans-serif] font-normal justify-center leading-[0] relative shrink-0 text-[16px] text-center text-nowrap text-white tracking-[0.1px]" style={{ fontVariationSettings: "'wdth' 100" }}>
-          <p className="leading-none whitespace-pre">Fazer Pedido</p>
-        </div>
+      {/* Botão */}
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="bg-[#0f4c50] px-6 py-3 rounded-[8px] w-full text-white hover:bg-[#0d4247] transition-colors"
+      >
+        Fazer Pedido
       </button>
+
+      {/* Modal */}
+      <AddToCartModal
+        product={product}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }
+
 
 interface MenuCategoryProps {
   title: string;
