@@ -19,20 +19,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   const { addOrder } = useOrders();
   const { cart, removeFromCart, clearCart } = useCart();
 
-  const handleCheckout = () => {
-  // monte o objeto do pedido com itens do carrinho e total
-  addOrder({
-    id: Date.now().toString(),
-    items: cart,
-    status: "aberto", // ou o que você usa
-    createdAt: new Date().toISOString(),
-    // ... total, cliente, observações, etc.
-  });
-  clearCart();
-  onClose(); // fecha sidebar
-  alert("Pedido enviado!");
-};
-
+  // Declaração única de estado para nome e mesa
   const [step, setStep] = useState<Step>("cart");
   const [customerName, setCustomerName] = useState("");
   const [tableNumber, setTableNumber] = useState("");
@@ -50,48 +37,50 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
     setErrors({});
   };
 
-  const validateAndFinish = () => {
-  const newErrors: { name?: string; table?: string } = {};
-  if (!customerName.trim()) newErrors.name = "Informe como você quer ser chamado(a).";
-  if (!tableNumber.trim()) newErrors.table = "Informe o número/identificação da mesa.";
-  setErrors(newErrors);
-  if (Object.keys(newErrors).length > 0) return;
+  function handleFinishOrder() {
+    const newErrors: { name?: string; table?: string } = {};
+    if (!customerName.trim()) newErrors.name = "Informe como você quer ser chamado(a).";
+    if (!tableNumber.trim()) newErrors.table = "Informe o número/identificação da mesa.";
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
 
-  // monta items a partir do cart
-  const items = cart.map(i => ({
-    id: i.product.id,
-    name: i.product.name,
-    category: i.product.category,
-    size: i.size,
-    unitPrice: i.price,
-    quantity: i.quantity,
-    subtotal: i.price * i.quantity,
-  }));
+    if (cart.length === 0) {
+      alert("Seu carrinho está vazio.");
+      return;
+    }
 
-  // cria o pedido em memória (id aleatório + datetime definidos no contexto)
-  const order = addOrder({
-    name: customerName,
-    table: tableNumber,
-    items,
-    total,
-  });
+    const items = cart.map((item) => ({
+      productId: item.id,
+      name: item.name,
+      size: item.size,
+      quantity: item.quantity,
+      unitPrice: item.price,
+      total: item.price * item.quantity,
+    }));
 
-  // comportamento pós envio (ajuste como preferir)
-  clearCart();
-  setStep("cart");
-  setCustomerName("");
-  setTableNumber("");
-  onClose();
+    const order = addOrder({
+      name: customerName.trim(),
+      table: tableNumber.trim(),
+      items,
+      total,
+    });
 
-  // opcional: feedback
-  // console.log("Pedido criado:", order);
-};
+    // comportamento pós envio (ajuste como preferir)
+    clearCart();
+    setStep("cart");
+    setCustomerName("");
+    setTableNumber("");
+    onClose();
+
+    // opcional: feedback
+    console.log("Pedido criado:", order);
+  }
 
   // Submissão com Enter no formulário
   const onFormKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      validateAndFinish();
+      handleFinishOrder();
     }
   };
 
@@ -134,20 +123,20 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                 ) : (
                   <ul className="space-y-4">
                     {cart.map((item, idx) => (
-                      <li key={`${item.product.id}-${item.size}-${idx}`} className="flex flex-col border-b pb-3 gap-1">
+                      <li key={`${item.id}-${item.size}-${idx}`} className="flex flex-col border-b pb-3 gap-1">
                         <div className="flex justify-between items-center">
                           <p className="font-semibold text-[#0f4c50]">
-                            {item.product.name}
+                            {item.name}
                           </p>
                           <button
-                            onClick={() => removeFromCart(item.product.id, item.size)}
+                            onClick={() => removeFromCart(item.id, item.size)}
                             className="text-red-500 text-sm"
                           >
                             Remover
                           </button>
                         </div>
                         <p className="text-sm text-gray-500">
-                          Categoria: {item.product.category}
+                          Categoria: {item.category}
                         </p>
                         <p className="text-sm">
                           Tamanho: <span className="font-medium">{item.size}</span>
@@ -228,15 +217,12 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                   >
                     Continuar pedido
                   </button>
-
-                 
                   <button
                     onClick={clearCart}
                     className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg transition"
                   >
                     Limpar carrinho
                   </button>
-                  
                 </>
               ) : (
                 <>
@@ -247,7 +233,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                     Voltar ao carrinho
                   </button>
                   <button
-                    onClick={validateAndFinish}
+                    onClick={handleFinishOrder}
                     className="w-full bg-[#0f4c50] hover:bg-[#0d4247] text-white py-2 rounded-lg transition"
                   >
                     Finalizar pedido

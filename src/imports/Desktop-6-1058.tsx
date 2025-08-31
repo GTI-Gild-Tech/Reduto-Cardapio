@@ -266,7 +266,7 @@ function Kanban1() {
     <div className="bg-[#ffffff] relative rounded-2xl shrink-0" data-name="Kanban">
       <div className="box-border content-stretch flex flex-col gap-4 items-center justify-start overflow-clip p-[24px] relative">
         <div className="font-['Rethink_Sans:Bold',_sans-serif] font-bold leading-[0] min-w-full relative shrink-0 text-[#0f4c50] text-[37px]" style={{ width: "min-content" }}>
-          <p className="leading-[44px]">Cafés</p>
+          <p className="leading-[44px]">Cafes</p>
         </div>
         {[...Array(4).keys()].map((_, i) => (
           <Ticket4 key={i} />

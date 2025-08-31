@@ -33,9 +33,9 @@ export const ProductsProvider: React.FC<React.PropsWithChildren> = ({ children }
   const [categories, setCategories] = useState<string[]>(() => {
     try {
       const raw = localStorage.getItem(LS_CATEGORIES_KEY);
-      return raw ? JSON.parse(raw) : ['Cappuccinos', 'Cafés', 'Lanches'];
+      return raw ? JSON.parse(raw) : ['Cappuccinos', 'Cafes', 'Lanches'];
     } catch {
-      return ['Cappuccinos', 'Cafés', 'Lanches'];
+      return ['Cappuccinos', 'Cafes', 'Lanches'];
     }
   });
 

@@ -21,7 +21,7 @@ function MenuProductCard({ product }: MenuProductCardProps) {
     switch (product.category) {
       case 'Cappuccinos':
         return "https://images.unsplash.com/photo-1658646479124-bc31e6849497?...";
-      case 'Cafés':
+      case 'Cafes':
         return "https://images.unsplash.com/photo-1612509590595-785e974ed690?...";
       case 'Lanches':
         return "https://images.unsplash.com/photo-1673534409216-91c3175b9b2d?...";
