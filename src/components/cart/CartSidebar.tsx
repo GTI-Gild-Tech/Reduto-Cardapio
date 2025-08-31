@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useOrders } from "../context/OrdersContext";
+import { OrderSuccess } from "../public_site/OrderSuccess";
 
 
 interface CartSidebarProps {
@@ -18,7 +19,8 @@ const formatPrice = (value: number) =>
 export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   const { addOrder } = useOrders();
   const { cart, removeFromCart, clearCart } = useCart();
-
+  const [successOpen, setSuccessOpen] = useState(false);
+  
   // Declaração única de estado para nome e mesa
   const [step, setStep] = useState<Step>("cart");
   const [customerName, setCustomerName] = useState("");
@@ -48,15 +50,18 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
       alert("Seu carrinho está vazio.");
       return;
     }
+    
 
-    const items = cart.map((i) => ({
-    name: i.product.name,
-    size: i.size,
-    category: i.product.category,
-    quantity: i.quantity,
-    unitPrice: Number(i.price),           // força número
-    subtotal: Number(i.price) * i.quantity
-  }));
+    // monta itens no formato aceito pelo OrdersContext
+   const items = cart.map((item) => ({
+     id: item.product.id,
+     name: item.product.name,
+     category: item.product.category,
+     size: item.size,
+     unitPrice: item.price,
+     quantity: item.quantity,
+     subtotal: item.price * item.quantity,
+   }));
     const total = items.reduce((s, it) => s + it.subtotal, 0);
 
     addOrder({ name: customerName, table: tableNumber, items, total });
@@ -73,7 +78,8 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
     setStep("cart");
     setCustomerName("");
     setTableNumber("");
-    onClose();
+    setSuccessOpen(true);
+    onClose?.();
 
     // opcional: feedback
     console.log("Pedido criado:", order);
@@ -247,6 +253,14 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
           </motion.div>
         </>
       )}
+      {/* Modal de sucesso — fica fora do drawer mas ainda dentro do AnimatePresence */}
+      <OrderSuccess
+        isOpen={successOpen}
+        onClose={() => setSuccessOpen(false)}
+        customerName={customerName}
+        tableNumber={tableNumber}
+        total={total}
+      />
     </AnimatePresence>
   );
 }
