@@ -66,13 +66,6 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
 
     addOrder({ name: customerName, table: tableNumber, items, total });
 
-    const order = addOrder({
-      name: customerName.trim(),
-      table: tableNumber.trim(),
-      items,
-      total,
-    });
-
     // comportamento pós envio (ajuste como preferir)
     clearCart();
     setStep("cart");
