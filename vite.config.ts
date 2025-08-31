@@ -7,4 +7,7 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  resolve: {
+    dedupe: ['react', 'react-dom'], // 👈 evita cópias duplicadas
+  },
 });

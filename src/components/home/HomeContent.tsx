@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Product } from "../cardapio/KanbanComponents";
 import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { useProducts } from "../context/ProductsContext";
-import { useCart } from "../context/CartContext";
+
 import { AddToCartModal } from "../cart/AddToCartModal";
 
 interface MenuProductCardProps {

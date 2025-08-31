@@ -1,27 +1,28 @@
 import imgBackground from "./../../assets/Background.png";
-import { motion } from 'framer-motion';
-import { MenuSection } from './MenuSection';
-import { Navigation } from './Navigation';
-import { CoffeeIllustration } from './CoffeeIllustration';
-import { useApp } from './AppContext';
-import { menuCategories } from '../../data/menuData';
-import { HomeContent } from '../home/HomeContent';
+import { motion } from "framer-motion";
+import { Navigation } from "./Navigation";
+import { CoffeeIllustration } from "./CoffeeIllustration";
+import { HomeContent } from "../home/HomeContent";
 
-export function Home() {
-  const { addToCart } = useApp();
+type HomeProps = {
+  onOpenCart: () => void;
+};
+
+export function Home({ onOpenCart }: HomeProps) {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div 
+      <div
         className="relative bg-cover bg-center min-h-[100vh]"
         style={{ backgroundImage: `url('${imgBackground}')` }}
       >
-      
-
-        {/* Conteúdo da Hero Section */}
         <div className="relative mx-auto max-w-[1129px] px-4">
-          <Navigation />
+          {/* Navbar pública */}
+          <Navigation onOpenCart={onOpenCart} />
+
+          {/* Ilustração */}
           <CoffeeIllustration />
+
           {/* Scroll Indicator */}
           <motion.div
             animate={{ y: [0, 10, 0] }}
@@ -37,7 +38,8 @@ export function Home() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
             className="flex justify-center pt-1 text-[#E4DDCD]"
-          > Veja mais
+          >
+            Veja mais
           </motion.div>
         </div>
       </div>
@@ -45,27 +47,9 @@ export function Home() {
       {/* Main Content Section */}
       <div className="bg-[#f0eee9]">
         <div className="max-w-[1129px] mx-auto px-4">
-          {menuCategories.map((category, index) => (
-            <motion.div
-              key={category.id}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ 
-                duration: 0.6, 
-                delay: 0.8 + (index * 0.2),
-                ease: "easeOut" 
-              }}
-            >
-              <MenuSection
-                title={category.title}
-                items={category.items}
-                onAddToCart={addToCart}
-              />
-            </motion.div>
-          ))}
+          {/* Usamos o HomeContent que lê do ProductsContext (mesmo da dashboard) */}
+          <HomeContent />
         </div>
-
-        {/* Footer spacing */}
         <div className="h-20" />
       </div>
     </div>

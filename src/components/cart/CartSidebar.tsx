@@ -2,7 +2,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { useCart } from "../context/CartContext";
-
 import { useOrders } from "../context/OrdersContext";
 
 
@@ -19,6 +18,20 @@ const formatPrice = (value: number) =>
 export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   const { addOrder } = useOrders();
   const { cart, removeFromCart, clearCart } = useCart();
+
+  const handleCheckout = () => {
+  // monte o objeto do pedido com itens do carrinho e total
+  addOrder({
+    id: Date.now().toString(),
+    items: cart,
+    status: "aberto", // ou o que você usa
+    createdAt: new Date().toISOString(),
+    // ... total, cliente, observações, etc.
+  });
+  clearCart();
+  onClose(); // fecha sidebar
+  alert("Pedido enviado!");
+};
 
   const [step, setStep] = useState<Step>("cart");
   const [customerName, setCustomerName] = useState("");

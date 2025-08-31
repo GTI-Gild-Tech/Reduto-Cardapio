@@ -1,86 +1,94 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+// src/components/context/OrdersContext.tsx
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
-export interface OrderItem {
-  id: string;
+export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
+
+export type OrderItem = {
+  productId: string;
   name: string;
-  category: string;
-  size: string;
-  unitPrice: number;
+  size?: string;
+  price: number;
   quantity: number;
-  subtotal: number;
-}
+};
 
-export interface Order {
-  id: string;            // ex.: "#247"
-  table: string;         // mesa
-  name: string;          // cliente
-  datetime: string;      // "dd/MM/yyyy HH'h'mm"
-  finalizado: boolean;
+export type Order = {
+  id: string;
+  createdAt: number;
   items: OrderItem[];
   total: number;
-}
+  status: OrderStatus;
+  customer?: { name?: string; phone?: string };
+};
 
-interface OrdersContextType {
+type OrdersCtx = {
   orders: Order[];
-  addOrder: (order: Omit<Order, "id" | "datetime" | "finalizado">) => Order;
-  toggleFinalizado: (orderId: string) => void;
-}
+  addOrder: (order: Order) => void;
+  updateOrder: (order: Order) => void;
+  updateOrderStatus: (id: string, status: OrderStatus) => void;
+  removeOrder: (id: string) => void;
+  clearOrders: () => void;
+};
 
-const OrdersContext = createContext<OrdersContextType | undefined>(undefined);
+const OrdersContext = createContext<OrdersCtx | undefined>(undefined);
 
-function formatDateBR(d = new Date()) {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const dd = pad(d.getDate());
-  const mm = pad(d.getMonth() + 1);
-  const yyyy = d.getFullYear();
-  const hh = pad(d.getHours());
-  const min = pad(d.getMinutes());
-  return `${dd}/${mm}/${yyyy} ${hh}h${min}`;
-}
+const LS_ORDERS_KEY = 'gti.orders.v1';
 
-// Gera "#XYZ" com 3 a 4 dígitos aleatórios e garante unicidade em memória
-function generateOrderId(existing: Set<string>) {
-  let id = "";
-  do {
-    const n = Math.floor(100 + Math.random() * 9000); // 3-4 dígitos
-    id = `#${n}`;
-  } while (existing.has(id));
-  return id;
-}
+export const OrdersProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+  // ✅ Hooks SOMENTE dentro do componente
+  const [orders, setOrders] = useState<Order[]>(() => {
+    try {
+      const raw = localStorage.getItem(LS_ORDERS_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
 
-export function OrdersProvider({ children }: { children: React.ReactNode }) {
-  const [orders, setOrders] = useState<Order[]>([]);
+  // Persistência
+  useEffect(() => {
+    localStorage.setItem(LS_ORDERS_KEY, JSON.stringify(orders));
+  }, [orders]);
 
-  const existingIds = useMemo(() => new Set(orders.map(o => o.id)), [orders]);
-
-  const addOrder: OrdersContextType["addOrder"] = (payload) => {
-    const id = generateOrderId(existingIds);
-    const datetime = formatDateBR(new Date());
-    const newOrder: Order = {
-      id,
-      datetime,
-      finalizado: false,
-      ...payload,
+  // Sincroniza entre abas
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === LS_ORDERS_KEY && e.newValue) {
+        try { setOrders(JSON.parse(e.newValue)); } catch {}
+      }
     };
-    setOrders(prev => [newOrder, ...prev]); // adiciona no topo
-    return newOrder;
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
+  const addOrder = (order: Order) => {
+    setOrders(prev => [...prev, order]);
   };
 
-  const toggleFinalizado = (orderId: string) => {
-    setOrders(prev =>
-      prev.map(o => (o.id === orderId ? { ...o, finalizado: !o.finalizado } : o))
-    );
+  const updateOrder = (order: Order) => {
+    setOrders(prev => prev.map(o => (o.id === order.id ? order : o)));
   };
+
+  const updateOrderStatus = (id: string, status: OrderStatus) => {
+    setOrders(prev => prev.map(o => (o.id === id ? { ...o, status } : o)));
+  };
+
+  const removeOrder = (id: string) => {
+    setOrders(prev => prev.filter(o => o.id !== id));
+  };
+
+  const clearOrders = () => setOrders([]);
 
   return (
-    <OrdersContext.Provider value={{ orders, addOrder, toggleFinalizado }}>
+    <OrdersContext.Provider
+      value={{ orders, addOrder, updateOrder, updateOrderStatus, removeOrder, clearOrders }}
+    >
       {children}
     </OrdersContext.Provider>
   );
-}
+};
 
-export function useOrders() {
+export const useOrders = () => {
   const ctx = useContext(OrdersContext);
-  if (!ctx) throw new Error("useOrders deve ser usado dentro de OrdersProvider");
+  if (!ctx) throw new Error('useOrders must be used within an OrdersProvider');
   return ctx;
-}
+};
