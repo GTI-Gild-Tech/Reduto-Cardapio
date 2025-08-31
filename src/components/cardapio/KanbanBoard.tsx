@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import Cropper from "react-easy-crop";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { KanbanColumn, Product } from "./KanbanComponents";
@@ -131,66 +132,69 @@ function EditProductModal({ product, isOpen, onClose, onSave, categories }: Edit
     selectedSizes: ['M', 'G'] as string[],
     sizePrices: { P: '', M: '', G: '' } as Record<string, string>,
     customOptions: [] as CustomOption[],
-    uniquePrice: ''
+    uniquePrice: '',
+    imageUrl: '' as string,
   });
 
   useEffect(() => {
-    if (product) {
-      // Convert existing product to new format
-      setFormData({
-        name: product.name,
-        category: product.category,
-        description: '',
-        priceType: 'Tamanho',
-        selectedSizes: product.sizes.map(s => s.size),
-        sizePrices: product.sizes.reduce((acc, size) => ({ ...acc, [size.size]: size.price }), {} as Record<string, string>),
-        customOptions: [],
-        uniquePrice: ''
-      });
-    } else {
-      setFormData({
-        name: '',
-        category: categories[0] || 'Cappuccinos',
-        description: '',
-        priceType: 'Tamanho',
-        selectedSizes: ['M', 'G'],
-        sizePrices: { P: '', M: '', G: '' },
-        customOptions: [],
-        uniquePrice: ''
-      });
-    }
-  }, [product, isOpen, categories]);
+  if (product) {
+    setFormData({
+      name: product.name,
+      category: product.category,
+      description: '',
+      priceType: 'Tamanho',
+      selectedSizes: product.sizes.map(s => s.size),
+      sizePrices: product.sizes.reduce((acc, size) => ({ ...acc, [size.size]: size.price }), {} as Record<string, string>),
+      customOptions: [],
+      uniquePrice: '',
+      imageUrl: product.imageUrl ?? '',   // << seguro
+    });
+  } else {
+    setFormData({
+      name: '',
+      category: categories[0] || 'Cappuccinos',
+      description: '',
+      priceType: 'Tamanho',
+      selectedSizes: ['M', 'G'],
+      sizePrices: { P: '', M: '', G: '' },
+      customOptions: [],
+      uniquePrice: '',
+      imageUrl: '',                       // << seguro
+    });
+  }
+}, [product, isOpen, categories]);
+
 
   const handleSave = () => {
-    if (!formData.name || !formData.category) return;
+  if (!formData.name || !formData.category) return;
 
-    let sizes: { size: string; price: string }[] = [];
+  let sizes: { size: string; price: string }[] = [];
+  if (formData.priceType === 'Tamanho') {
+    sizes = formData.selectedSizes
+      .filter(size => formData.sizePrices[size])
+      .map(size => ({ size, price: formData.sizePrices[size] }));
+  } else if (formData.priceType === 'Porção') {
+    sizes = formData.customOptions
+      .filter(option => option.price)
+      .map(option => ({ size: option.name, price: option.price }));
+  } else {
+    sizes = [{ size: 'Único', price: formData.uniquePrice }];
+  }
+  if (sizes.length === 0) return;
 
-    if (formData.priceType === 'Tamanho') {
-      sizes = formData.selectedSizes
-        .filter(size => formData.sizePrices[size])
-        .map(size => ({ size, price: formData.sizePrices[size] }));
-    } else if (formData.priceType === 'Porção') {
-      sizes = formData.customOptions
-        .filter(option => option.price) // Só incluir opções que têm preço definido
-        .map(option => ({ 
-          size: option.name, 
-          price: option.price
-        }));
-    } else {
-      sizes = [{ size: 'Único', price: formData.uniquePrice }];
-    }
+  const base = product ? { ...product } : {}; // << evita spread de null/undefined
 
-    if (sizes.length === 0) return;
+  onSave({
+    ...base,
+    ...formData,
+    id: product?.id || Date.now().toString(),
+    sizes,
+    imageUrl: formData.imageUrl || product?.imageUrl || '', // << seguro
+  } as Product);
 
-    onSave({
-      ...product!,
-      ...formData,
-      id: product?.id || Date.now().toString(),
-      sizes
-    } as Product);
-    onClose();
-  };
+  onClose();
+};
+
 
   const toggleSize = (size: string) => {
     setFormData(prev => ({
@@ -236,8 +240,62 @@ function EditProductModal({ product, isOpen, onClose, onSave, categories }: Edit
       customOptions: prev.customOptions.filter(option => option.id !== id)
     }));
   };
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const onPickImage = () => fileInputRef.current?.click();
+  const [isCropping, setIsCropping] = useState(false);
+  const [rawImage, setRawImage] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  async function getCroppedImg(imageSrc: string, pixelCrop: {x:number;y:number;width:number;height:number}) {
+  const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = imageSrc;
+  });
+
+  const canvas = document.createElement("canvas");
+  canvas.width = pixelCrop.width;
+  canvas.height = pixelCrop.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas não suportado");
+
+  ctx.drawImage(
+    image,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    pixelCrop.width,
+    pixelCrop.height
+  );
+
+  // gera dataURL em PNG (padrão). se quiser, troque para "image/jpeg" com qualidade
+  return canvas.toDataURL("image/png");
+}
 
   if (!isOpen) return null;
+
+  const onImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // validação simples (opcional)
+    const okTypes = ["image/jpeg", "image/png", "image/webp"];
+    if (!okTypes.includes(file.type)) {
+      alert("É aceito apenas os formatos JPG, PNG e WEBP.");
+      e.target.value = "";
+      return;
+    }
+    const reader = new FileReader();
+      reader.onload = () => {
+        setRawImage(String(reader.result));
+        setIsCropping(true);
+      };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -311,13 +369,50 @@ function EditProductModal({ product, isOpen, onClose, onSave, categories }: Edit
               <div className="font-['Open_Sans:Regular',_sans-serif] font-normal leading-[0] mb-2 text-[13px] text-black tracking-[0.52px]" style={{ fontVariationSettings: "'wdth' 100" }}>
                 <p className="leading-[normal] whitespace-pre">Adicione imagem do produto</p>
               </div>
-              <div className="h-[100px] relative rounded-[5px] w-full border-2 border-dashed border-[#b5b5b5] flex items-center justify-center bg-[#fafafa] hover:bg-[#f0f0f0] transition-colors cursor-pointer">
-                <div className="text-center">
-                  <div className="text-[#797474] text-[14px] mb-2">📷</div>
-                  <div className="text-[#797474] text-[12px]">Clique para adicionar imagem</div>
-                </div>
+  
+              {/* +++ INPUT oculto + handler */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={onImageChange}
+              />
+
+              {/* +++ Área clicável com preview */}
+              <div
+                onClick={onPickImage}
+                className="h-[160px] relative rounded-[5px] w-full border-2 border-dashed border-[#b5b5b5] flex items-center justify-center bg-[#fafafa] hover:bg-[#f0f0f0] transition-colors cursor-pointer overflow-hidden"
+              >
+                {formData.imageUrl ? (
+                  <img
+                    src={formData.imageUrl}
+                    alt="Prévia do produto"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-center">
+                    <div className="text-[#797474] text-[14px] mb-2">📷</div>
+                    <div className="text-[#797474] text-[12px]">
+                      Clique para adicionar imagem
+                    </div>
+                  </div>
+                )}
               </div>
+
+              {/* +++ Botão remover (opcional) */}
+              {formData.imageUrl && (
+                <div className="mt-2 flex justify-end">
+                  <button
+                    onClick={() => setFormData(prev => ({ ...prev, imageUrl: '' }))}
+                    className="text-sm px-3 py-1.5 bg-gray-200 hover:bg-gray-300 rounded-md"
+                  >
+                    Remover imagem
+                  </button>
+                </div>
+              )}
             </div>
+
           </div>
 
           {/* Right column - Price options */}
@@ -513,6 +608,70 @@ function EditProductModal({ product, isOpen, onClose, onSave, categories }: Edit
             </div>
           </button>
         </div>
+        {/* Cropper overlay (dentro do EditProductModal) */}
+          {isCropping && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center">
+              <div className="absolute inset-0 bg-black/60" />
+              <div className="relative bg-white rounded-lg shadow-xl w-[90vw] max-w-[520px] p-4">
+                <h3 className="text-[#0f4c50] font-semibold mb-3">Ajuste a imagem (1:1)</h3>
+
+                <div className="relative w-full h-[320px] bg-[#f0f0f0] rounded-md overflow-hidden">
+                  <Cropper
+                    image={rawImage || undefined}
+                    crop={crop}
+                    zoom={zoom}
+                    aspect={1}
+                    onCropChange={setCrop}
+                    onZoomChange={setZoom}
+                    onCropComplete={(_, area) => setCroppedAreaPixels(area)}
+                    showGrid={false}
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-sm text-gray-700">Zoom</label>
+                  <input
+                    type="range"
+                    min={1}
+                    max={3}
+                    step={0.1}
+                    value={zoom}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="mt-4 flex justify-end gap-2">
+                  <button
+                    onClick={() => {
+                      setIsCropping(false);
+                      setRawImage(null);
+                      setZoom(1);
+                      setCrop({ x: 0, y: 0 });
+                    }}
+                    className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (!rawImage || !croppedAreaPixels) return;
+                      const croppedDataUrl = await getCroppedImg(rawImage, croppedAreaPixels);
+                      setFormData(prev => ({ ...prev, imageUrl: croppedDataUrl }));
+                      setIsCropping(false);
+                      setRawImage(null);
+                      setZoom(1);
+                      setCrop({ x: 0, y: 0 });
+                    }}
+                    className="px-4 py-2 rounded-md bg-[#0f4c50] hover:bg-[#0d4247] text-white"
+                  >
+                    Cortar
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
       </DialogContent>
     </Dialog>
   );

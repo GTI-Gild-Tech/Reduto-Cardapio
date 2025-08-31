@@ -17,6 +17,7 @@ function MenuProductCard({ product }: MenuProductCardProps) {
   };
 
   const getProductImage = () => {
+    if (product.imageUrl) return product.imageUrl;
     switch (product.category) {
       case 'Cappuccinos':
         return "https://images.unsplash.com/photo-1658646479124-bc31e6849497?...";

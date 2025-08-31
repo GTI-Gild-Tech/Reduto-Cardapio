@@ -7,9 +7,8 @@ export interface Product {
   category: string;
   description?: string;
   sizes: { size: string; price: string }[];
+  imageUrl?: string;     // ← nova: imagem principal (data URL por enquanto)
 }
-
-
 
 function DeleteIcon() {
   return (
