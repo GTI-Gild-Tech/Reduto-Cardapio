@@ -14,7 +14,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (username: string, password: string): Promise<boolean> => {
     // Aqui você faria a chamada para a sua API
     // Por enquanto, vamos simular uma verificação simples
-    if (username === "admin" && password === "1234") {
+    if (username === "admin" && password === "12345%") {
       setIsAuthenticated(true);
       return true;
     }

@@ -13,7 +13,7 @@ export function Home({ onOpenCart }: HomeProps) {
     <div className="min-h-screen">
       {/* Hero Section */}
       <div
-        className="relative bg-cover bg-center min-h-[100vh]"
+        className="relative bg-cover bg-center min-h-[100vh] justify-center align-center flex flex-col pt-20"
         style={{ backgroundImage: `url('${imgBackground}')` }}
       >
         <div className="relative mx-auto max-w-[1129px] px-4">

@@ -49,14 +49,17 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
       return;
     }
 
-    const items = cart.map((item) => ({
-      productId: item.id,
-      name: item.name,
-      size: item.size,
-      quantity: item.quantity,
-      unitPrice: item.price,
-      total: item.price * item.quantity,
-    }));
+    const items = cart.map((i) => ({
+    name: i.product.name,
+    size: i.size,
+    category: i.product.category,
+    quantity: i.quantity,
+    unitPrice: Number(i.price),           // força número
+    subtotal: Number(i.price) * i.quantity
+  }));
+    const total = items.reduce((s, it) => s + it.subtotal, 0);
+
+    addOrder({ name: customerName, table: tableNumber, items, total });
 
     const order = addOrder({
       name: customerName.trim(),

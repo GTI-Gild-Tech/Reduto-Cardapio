@@ -10,7 +10,7 @@ export function CoffeeIllustration() {
       transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
     >
       <motion.div 
-        className="w-[500px]  max-w-full"
+        className="md:w-[500px]  max-w-full w-[250px]"
         whileHover={{ scale: 1.05 }}
         transition={{ duration: 0.3 }}
       >

@@ -214,7 +214,9 @@ export function Table({ searchTerm, startDate, endDate, orders }: TableProps) {
         })}
       </div>
 
-      {selectedOrder && <OrderModal order={selectedOrder} onClose={handleCloseModal} />}
+      {selectedOrder && (
+        <OrderModal order={selectedOrder} onClose={handleCloseModal} />
+      )}
 
       {confirmOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">

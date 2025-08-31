@@ -14,7 +14,7 @@ export function Navigation({ onOpenCart }: NavigationProps) {
 
   return (
     <motion.nav
-      className="flex justify-center pb-20"
+      className="fixed top-0 left-0 w-full z-10 flex justify-center pb-20"
       initial={{ opacity: 0, y: -50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.2 }}

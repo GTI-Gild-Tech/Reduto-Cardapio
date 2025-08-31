@@ -105,15 +105,16 @@ export function HomeContent() {
 
   return (
     <div className="basis-0 box-border content-stretch flex flex-col gap-8 grow items-center justify-start min-h-px min-w-px px-8 py-[50px] relative shrink-0 w-full">
+      
       {/* Título principal */}
-      <div className="font-['Retrokia:Demo',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#0f4c50] text-[48px] text-center tracking-[-1.28px]">
-        <p className="leading-[1.3] whitespace-pre font-[Retrokia]">
+      <div className="font-['Retrokia:Demo',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#0f4c50] md:text-5xl text-3xl text-center tracking-[-1.28px]">
+        <p className="leading-[1.3] whitespace-pre font-[Retrokia] ">
           Nosso Cardapio
         </p>
       </div>
 
       {/* Subtítulo */}
-      <div className="font-['Rethink_Sans:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#797474] text-[18px] text-center max-w-[600px]">
+      <div className="font-['Rethink_Sans:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#797474] text-sm text-center max-w-[600px]">
         <p className="leading-[1.5]">
           Descubra nossos sabores únicos e faça seu pedido. Cada produto é preparado com ingredientes selecionados para proporcionar a melhor experiência.
         </p>

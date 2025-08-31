@@ -6,19 +6,18 @@ interface LoginProps {
 }
 
 export const Login: React.FC<LoginProps> = ({ onLogin }) => {
-  let [username, setUsername] = useState("");
-  let [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    
+
     const success = await onLogin(username, password);
 
     if (success) {
-      // Redireciona para a dashboard após o login bem-sucedido
       navigate("/dashboard-admin/home");
     } else {
       setError("Usuário ou senha inválidos.");
@@ -26,45 +25,61 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <div className="p-8 bg-white rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login Administrativo</h2>
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
+    <div className="flex items-center justify-center min-h-screen bg-[#f0eee9]">
+      <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-8">
+        {/* Título */}
+        <h2 className="text-3xl font-bold text-center text-[#0f4c50] mb-6 font-[Retrokia]">
+          Login Administrativo
+        </h2>
+
+        {/* Mensagem de erro */}
+        {error && (
+          <p className="text-red-600 text-sm text-center mb-4">{error}</p>
+        )}
+
+        {/* Formulário */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label
+              className="block text-sm font-medium text-[#0f4c50] mb-1"
+              htmlFor="username"
+            >
               Usuário
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="username"
               type="text"
-              placeholder="admin"
+              placeholder="Digite aqui..."
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0f4c50] text-gray-700"
             />
           </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+
+          <div>
+            <label
+              className="block text-sm font-medium text-[#0f4c50] mb-1"
+              htmlFor="password"
+            >
               Senha
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="password"
               type="password"
-              placeholder="******"
+              placeholder="•••••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#0f4c50] text-gray-700"
             />
           </div>
-          <div className="flex items-center justify-between">
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-              type="submit"
-            >
-              Entrar
-            </button>
-          </div>
+
+          {/* Botão */}
+          <button
+            type="submit"
+            className="w-full bg-[#0f4c50] hover:bg-[#0d4247] text-white font-semibold py-3 rounded-lg shadow-md transition"
+          >
+            Entrar
+          </button>
         </form>
       </div>
     </div>

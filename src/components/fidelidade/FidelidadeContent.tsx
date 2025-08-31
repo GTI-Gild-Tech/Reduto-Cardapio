@@ -7,7 +7,8 @@ export function FidelidadeContent() {
         </p>
       </div>
       <div className="text-center text-[#797474]">
-        <p>Componente Fidelidade será implementado em seguida</p>
+        <p>A opção de fidelidade será implementada em breve.</p>
+        <p>Assinado: Ilca ❤️</p>
       </div>
     </div>
   );
